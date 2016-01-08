@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/contents_bg01"
+    >
+
+    <LinearLayout
+        android:id="@+id/layout_time"
+        android:layout_width="500px"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/round_bg"
+        android:gravity="center"
+    >
+        <TextView
+            android:id="@+id/txt_hour"
+            android:layout_width="220px"
+            android:layout_height="wrap_content"
+            android:textColor="#E0A025"
+            android:textSize="200px"
+            android:gravity="right"
+            android:text="00"
+            android:textStyle="bold"
+            android:layout_marginTop="-15px"
+            android:layout_marginBottom="-15px"
+        />
+
+        <LinearLayout
+            android:layout_width="160px"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginLeft="15px"
+            android:paddingTop="20px"
+        >
+            <TextView
+                android:id="@+id/txt_dt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="40px"
+                android:textColor="#0093D1"
+                android:textStyle="bold"
+                android:text="01/01"
+            />
+            <TextView
+                android:id="@+id/txt_min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-18px"
+                android:textColor="#CCE0A025"
+                android:textSize="120px"
+                android:text="00"
+            />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="500px"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_time"
+        android:background="@drawable/round_bg"
+    >
+        <!--
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="현재사용량"
+            android:textColor="#004C70"
+            android:textSize="30px"
+            android:textStyle="bold"
+        />
+        -->
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerInParent="true"
+        >
+            <TextView
+                android:id="@+id/txt_watt"
+                android:layout_width="250px"
+                android:layout_height="wrap_content"
+                android:textColor="#F2635F"
+                android:textSize="150px"
+                android:gravity="right"
+                android:text="345"
+            />
+            <TextView
+                android:id="@+id/txt_watt_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#0093D1"
+                android:textSize="150px"
+                android:text="W"
+            />
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+
+
+    <Button
+        android:id="@+id/btn_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SETTING"
+    />
+
+
+</RelativeLayout>

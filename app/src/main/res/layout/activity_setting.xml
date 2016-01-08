@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+>
+    <PreferenceCategory
+        android:title="스마트 분전함"
+    >
+        <Preference android:title="Bluetooth 검색" android:key="pref_search_bt" />
+        <ListPreference
+            android:title="장치 주소"
+            android:key="pref_bt_address"
+        />
+    </PreferenceCategory>
+</PreferenceScreen>
