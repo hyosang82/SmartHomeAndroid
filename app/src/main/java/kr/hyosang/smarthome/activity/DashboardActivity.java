@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -26,6 +27,8 @@ public class DashboardActivity extends Activity {
     private TextView mTxtDt;
     private TextView mTxtWatt;
     private TextView mTxtWattUnit;
+    private TextView mTxtWattTime;
+    private TextView mTxtWattMore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +41,22 @@ public class DashboardActivity extends Activity {
         mTxtDt = (TextView) findViewById(R.id.txt_dt);
         mTxtWatt = (TextView) findViewById(R.id.txt_watt);
         mTxtWattUnit = (TextView) findViewById(R.id.txt_watt_unit);
+        mTxtWattTime = (TextView) findViewById(R.id.txt_watt_time);
+        mTxtWattMore = (TextView) findViewById(R.id.txt_watt_more);
 
         findViewById(R.id.btn_setting).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(DashboardActivity.this, SettingActivity.class);
                 startActivity(i);
+            }
+        });
+
+        findViewById(R.id.layout_watt).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ServiceManager.getInstance().requestWattMeasure();
+                Toast.makeText(DashboardActivity.this, "전력사용량 측정 요청", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -97,8 +110,35 @@ public class DashboardActivity extends Activity {
     private ServiceListener mServiceListener = new ServiceListener() {
         @Override
         public void onWattMeasured(WhMeterVO data) {
-            String watt = String.format("%.1f", data.currentWatt);
+            String watt = "--.-";
+            String unit = "W";
+
+            if(data.currentWatt > 950f) {
+                watt = String.format("%.2f", data.currentWatt / 1000f);
+                unit = "kW";
+            }else {
+                watt = String.format("%.1f", data.currentWatt);
+                unit = "W";
+            }
+
             mTxtWatt.setText(watt);
+            mTxtWattUnit.setText(unit);
+
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(data.measuredTime);
+            int m = c.get(Calendar.MONTH) + 1;
+            int d = c.get(Calendar.DAY_OF_MONTH);
+            int hh = c.get(Calendar.HOUR_OF_DAY);
+            int mm = c.get(Calendar.MINUTE);
+            int ss = c.get(Calendar.SECOND);
+            String measured = String.format("측정시간 %02d/%02d %02d:%02d:%02d", m, d, hh, mm, ss);
+            mTxtWattTime.setText(measured);
+
+            String more = String.format("당월누적 %.4fkWh / 전압 %.1fV / 전류량 %.2fA",
+                    data.monthlyUsedWatt / 1000f, data.currentVoltage, data.totalCurrent);
+            mTxtWattMore.setText(more);
+
+
         }
     };
 

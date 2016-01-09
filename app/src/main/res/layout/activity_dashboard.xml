@@ -56,51 +56,65 @@
         </LinearLayout>
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/layout_watt"
         android:layout_width="500px"
         android:layout_height="wrap_content"
         android:layout_below="@id/layout_time"
         android:background="@drawable/round_bg"
+        android:gravity="center_vertical|center"
+        android:orientation="vertical"
     >
-        <!--
         <TextView
+            android:id="@+id/txt_watt_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="현재사용량"
-            android:textColor="#004C70"
-            android:textSize="30px"
-            android:textStyle="bold"
+            android:layout_gravity="right"
+            android:layout_marginTop="15px"
+            android:layout_marginRight="20px"
+            android:textSize="24px"
+            android:textColor="#D8D8D8"
+            android:text=""
         />
-        -->
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_centerInParent="true"
+            android:layout_marginTop="-38px"
         >
             <TextView
                 android:id="@+id/txt_watt"
-                android:layout_width="250px"
+                android:layout_width="300px"
                 android:layout_height="wrap_content"
                 android:textColor="#F2635F"
-                android:textSize="150px"
+                android:textSize="130px"
                 android:gravity="right"
-                android:text="345"
+                android:text="--.-"
             />
             <TextView
                 android:id="@+id/txt_watt_unit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#0093D1"
-                android:textSize="150px"
+                android:textSize="110px"
                 android:text="W"
             />
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/txt_watt_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-27px"
+            android:layout_marginBottom="14px"
+            android:textSize="18px"
+            android:textColor="#D8D8D8"
+            />
 
 
-    </RelativeLayout>
+
+    </LinearLayout>
 
 
     <Button

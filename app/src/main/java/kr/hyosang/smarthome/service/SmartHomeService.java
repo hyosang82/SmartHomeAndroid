@@ -8,6 +8,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 
 import kr.hyosang.smarthome.IServiceInterface;
@@ -23,7 +24,10 @@ public class SmartHomeService extends Service {
     public static final String EXTRA_MESSENGER = "extra_messenger";
     public static final String EXTRA_BUNDLE_DATA = "extra_bundle_data";
 
+    public static final int WATT_MEASURE_INTERVAL = 30 * 1000;  //30 seconds
+
     public static final int MSG_WATT_MEASURED = 0x01;
+    public static final int MSG_DO_WATT_MEASURE = 0x02;
 
     private Messenger mClient = null;
 
@@ -41,7 +45,8 @@ public class SmartHomeService extends Service {
 
         mWhMeter = WhMeter.createInstance(this);
         mWhMeter.setHandler(mHandler);
-        mWhMeter.query();
+
+        measureWatt();
     }
 
     @Override
@@ -69,6 +74,15 @@ public class SmartHomeService extends Service {
         }
     }
 
+    private void measureWatt() {
+        mWhMeter.query();
+
+        //요청에 실패할수도 있으므로 여기서 다음 측정메세지를 추가한다.
+        if(!mHandler.hasMessages(MSG_DO_WATT_MEASURE)) {
+            mHandler.sendEmptyMessageAtTime(MSG_DO_WATT_MEASURE, SystemClock.uptimeMillis() + WATT_MEASURE_INTERVAL);
+        }
+    }
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -78,14 +92,19 @@ public class SmartHomeService extends Service {
                     sendClient(ServiceManager.MSG_WATT_MEASURED, val);
                 }
                 break;
+
+                case MSG_DO_WATT_MEASURE: {
+                    measureWatt();
+                }
+                break;
             }
         }
     };
 
     private final IServiceInterface.Stub mBinder = new IServiceInterface.Stub() {
         @Override
-        public String getString() throws RemoteException {
-            return "Test string";
+        public void requestWattMeasure() throws RemoteException {
+            mWhMeter.query();
         }
     };
 

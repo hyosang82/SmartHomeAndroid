@@ -44,9 +44,11 @@ public class WhMeter {
 
         Logger.d("Watt-hour meter address : " + mInstance.mDevAddr);
 
-        if(mInstance.mDevice == null) {
-            mInstance.mDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(mInstance.mDevAddr);
-            mInstance.mDevice.createBond();
+        if(mInstance.mDevAddr != null && mInstance.mDevAddr.length() > 0) {
+            if (mInstance.mDevice == null) {
+                mInstance.mDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(mInstance.mDevAddr);
+                mInstance.mDevice.createBond();
+            }
         }
 
         return mInstance;
@@ -84,41 +86,45 @@ public class WhMeter {
 
         @Override
         public void run() {
-            try {
-                BluetoothSocket socket = mDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+            if(mDevice == null) {
+                Logger.d("Watt Device not registered");
+            }else {
+                try {
+                    BluetoothSocket socket = mDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
 
-                socket.connect();
+                    socket.connect();
 
-                Logger.d("CONNECTED?" + socket.isConnected());
+                    Logger.d("CONNECTED?" + socket.isConnected());
 
-                mReceiver = new ReceiverThread(socket.getInputStream());
-                mSender = new SenderThread(socket.getOutputStream());
+                    mReceiver = new ReceiverThread(socket.getInputStream());
+                    mSender = new SenderThread(socket.getOutputStream());
 
-                mReceiver.start();
-                mSender.start();
+                    mReceiver.start();
+                    mSender.start();
 
-                //시작
-                mSender.send("rt0");
+                    //시작
+                    mSender.send("rt0");
 
-                synchronized(this) {
-                    this.wait();
+                    synchronized (this) {
+                        this.wait();
+                    }
+
+                    mSender.interrupt();
+                    mReceiver.interrupt();
+
+                    socket.close();
+
+                    Logger.d(mValue.toString());
+
+                    if (mUpdatedHandler != null) {
+                        mUpdatedHandler.sendEmptyMessage(SmartHomeService.MSG_WATT_MEASURED);
+                    }
+
+                } catch (IOException e) {
+                    Logger.e(e);
+                } catch (InterruptedException e) {
+                    Logger.e(e);
                 }
-
-                mSender.interrupt();
-                mReceiver.interrupt();
-
-                socket.close();
-
-                Logger.d(mValue.toString());
-
-                if(mUpdatedHandler != null) {
-                    mUpdatedHandler.sendEmptyMessage(SmartHomeService.MSG_WATT_MEASURED);
-                }
-
-            }catch(IOException e) {
-                Logger.e(e);
-            }catch(InterruptedException e) {
-                Logger.e(e);
             }
         }
 

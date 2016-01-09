@@ -11,6 +11,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
+import android.os.RemoteException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -102,6 +103,21 @@ public class ServiceManager {
 
         }
     };
+
+    /////////////////////SERVICE METHODS
+    public void requestWattMeasure() {
+        try {
+            if(mService != null) {
+                mService.requestWattMeasure();
+            }
+        }catch(RemoteException e) {
+            Logger.e(e);
+        }
+    }
+
+
+
+    /////////////////////SERVICE METHODS END
 
 
     private Messenger mMessenger = new Messenger(new Handler(Looper.getMainLooper()) {
