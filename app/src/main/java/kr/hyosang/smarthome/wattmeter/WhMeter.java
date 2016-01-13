@@ -15,6 +15,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import kr.hyosang.common.HttpUtil;
 import kr.hyosang.smarthome.common.Logger;
 import kr.hyosang.smarthome.service.SmartHomeService;
 
@@ -24,6 +25,7 @@ import kr.hyosang.smarthome.service.SmartHomeService;
 public class WhMeter {
     private static WhMeter mInstance = null;
 
+    private Context mContext = null;
     private String mDevAddr = "";
     private CommThread mCommThread = null;
     private BluetoothDevice mDevice = null;
@@ -38,6 +40,8 @@ public class WhMeter {
         if(mInstance == null) {
             mInstance = new WhMeter();
         }
+
+        mInstance.mContext = context;
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         mInstance.mDevAddr = pref.getString("pref_bt_address", "");
@@ -116,6 +120,9 @@ public class WhMeter {
 
                     Logger.d(mValue.toString());
 
+                    //서버로 등록
+                    registerLog();
+
                     if (mUpdatedHandler != null) {
                         mUpdatedHandler.sendEmptyMessage(SmartHomeService.MSG_WATT_MEASURED);
                     }
@@ -125,6 +132,29 @@ public class WhMeter {
                 } catch (InterruptedException e) {
                     Logger.e(e);
                 }
+            }
+        }
+
+        private void registerLog() {
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext.getApplicationContext());
+            String host = pref.getString("pref_server_ip", "");
+
+            if(host != null && host.length() > 0) {
+                String url = String.format("http://%s/json/watt_register.php", host);
+                HttpUtil.HttpData req = HttpUtil.HttpData.createPostRequest(url);
+                req.mListener = new HttpUtil.HttpListener() {
+                    @Override
+                    public void onCompleted(HttpUtil.HttpData httpData) {
+                        Logger.d("Watt log result = " + httpData.responseBody);
+                    }
+                };
+                req.postData.put("current_watt", String.format("%.3f", mValue.currentWatt));
+                req.postData.put("monthly", String.format("%.5f", mValue.monthlyUsedWatt));
+                req.postData.put("current_voltage", String.format("%.3f", mValue.currentVoltage));
+                req.postData.put("total_current", String.format("%.3f", mValue.totalCurrent));
+                req.postData.put("measure_time", String.valueOf(mValue.measuredTime));
+
+                HttpUtil.getInstance().add(req);
             }
         }
 

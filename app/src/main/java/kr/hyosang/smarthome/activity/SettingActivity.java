@@ -8,9 +8,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -23,6 +26,7 @@ import kr.hyosang.smarthome.R;
 
 public class SettingActivity extends PreferenceActivity {
     private ListPreference mBtAddrPref;
+    private EditTextPreference mServerIp;
 
     private Map<String, String> mDiscoveryList = new TreeMap<String, String>();
 
@@ -43,7 +47,26 @@ public class SettingActivity extends PreferenceActivity {
         });
 
         mBtAddrPref = (ListPreference) findPreference("pref_bt_address");
+        mServerIp = (EditTextPreference) findPreference("pref_server_ip");
 
+        mServerIp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                preference.setSummary(o.toString());
+
+                return false;
+            }
+        });
+
+        mBtAddrPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                preference.setSummary(mBtAddrPref.getEntry());
+                return false;
+            }
+        });
+
+        setLoadedPref();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
@@ -57,6 +80,12 @@ public class SettingActivity extends PreferenceActivity {
         unregisterReceiver(mReceiver);
 
         super.onDestroy();
+    }
+
+    private void setLoadedPref() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mBtAddrPref.setSummary(pref.getString("pref_bt_address", ""));
+        mServerIp.setSummary(pref.getString("pref_server_ip", ""));
     }
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {

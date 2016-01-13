@@ -12,4 +12,8 @@
             android:key="pref_bt_address"
         />
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="연동서버">
+        <EditTextPreference android:title="서버 IP" android:key="pref_server_ip" />
+    </PreferenceCategory>
 </PreferenceScreen>
