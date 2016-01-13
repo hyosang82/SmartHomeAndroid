@@ -16,4 +16,8 @@
     <PreferenceCategory android:title="연동서버">
         <EditTextPreference android:title="서버 IP" android:key="pref_server_ip" />
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="기타">
+        <Preference android:title="Download from github" android:key="pref_download" />
+    </PreferenceCategory>
 </PreferenceScreen>

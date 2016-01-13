@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -43,6 +44,16 @@ public class SettingActivity extends PreferenceActivity {
                 adapter.startDiscovery();
 
                 return true;
+            }
+        });
+
+        findPreference("pref_download").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hyosang82/SmartHomeAndroid/blob/master/app-debug.apk?raw=true"));
+                startActivity(i);
+
+                return false;
             }
         });
 
