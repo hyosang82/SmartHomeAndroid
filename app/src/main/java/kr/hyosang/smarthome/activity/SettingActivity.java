@@ -65,7 +65,7 @@ public class SettingActivity extends PreferenceActivity {
             public boolean onPreferenceChange(Preference preference, Object o) {
                 preference.setSummary(o.toString());
 
-                return false;
+                return true;
             }
         });
 
@@ -73,7 +73,7 @@ public class SettingActivity extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 preference.setSummary(mBtAddrPref.getEntry());
-                return false;
+                return true;
             }
         });
 
