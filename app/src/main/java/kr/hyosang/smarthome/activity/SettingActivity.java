@@ -50,7 +50,7 @@ public class SettingActivity extends PreferenceActivity {
         findPreference("pref_download").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hyosang82/SmartHomeAndroid/blob/master/app-debug.apk?raw=true"));
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hyosang82/SmartHomeAndroid/blob/master/bin/app-debug.apk?raw=true"));
                 startActivity(i);
 
                 return false;

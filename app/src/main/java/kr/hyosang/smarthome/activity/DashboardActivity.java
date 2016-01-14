@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import java.util.Calendar;
 
 import kr.hyosang.common.HttpUtil;
+import kr.hyosang.smarthome.BuildConfig;
 import kr.hyosang.smarthome.common.Logger;
 import kr.hyosang.smarthome.R;
 import kr.hyosang.smarthome.serviceclient.ServiceListener;

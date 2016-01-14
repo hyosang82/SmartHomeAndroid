@@ -3,7 +3,6 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
-
     defaultConfig {
         applicationId "kr.hyosang.smarthome"
         minSdkVersion 10
@@ -12,10 +11,15 @@ android {
         versionName "1.0"
     }
     buildTypes {
+        debug {
+            setVersionNameSuffix(getVersionSuffix())
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    productFlavors {
     }
 }
 
@@ -26,15 +30,45 @@ dependencies {
     compile project(':hscommon')
 }
 
-assembleDebug << {
-    android.applicationVariants.all { variant ->
-        if(variant.name.equals("debug")) {
-            println "Copying debug apk to project root..."
+String getVersionSuffix() {
+    def today = Calendar.instance
 
-            copy {
-                from variant.outputs[0].outputFile
-                into this.rootDir
-            }
+    def y = (int)(today.get(Calendar.YEAR) % 100)
+    def m = (int)(today.get(Calendar.MONTH) + 1)
+    def d = today.get(Calendar.DAY_OF_MONTH)
+    def hh = today.get(Calendar.HOUR_OF_DAY)
+    def mm = today.get(Calendar.MINUTE)
+    String s = String.format(".%02d%02d%02d.%02d%02d", y, m, d, hh, mm)
+
+    return s
+}
+
+preBuild << {
+    tasks.each { task ->
+        def m = task.name =~ /assemble(.*Debug)/
+        if(m.matches()) {
+            task.doLast({
+                println "Copying apk to bin directory ${m.group(1)}"
+
+                android.applicationVariants.all { variant ->
+                    if (variant.name.compareToIgnoreCase(m.group(1)) == 0) {
+                        println  "Copy ${variant.outputs[0].outputFile}"
+
+                        copy {
+                            from variant.outputs[0].outputFile
+                            into (this.rootDir.getAbsolutePath() + "/bin")
+                        }
+                    }
+                }
+            })
         }
+    }
+}
+
+clean << {
+    File b = new File(rootDir.getAbsolutePath() + "/bin")
+    files { b.listFiles() }.each {
+        println "Delete ${it}"
+        delete(it)
     }
 }
