@@ -154,7 +154,7 @@ public class WhMeter {
                 req.postData.put("monthly", String.format("%.5f", (mValue.monthlyUsedWatt / 1000f)));
                 req.postData.put("current_voltage", String.format("%.3f", mValue.currentVoltage));
                 req.postData.put("total_current", String.format("%.3f", mValue.totalCurrent));
-                req.postData.put("measure_time", String.valueOf(mValue.measuredTime / 1000f));
+                req.postData.put("measure_time", String.valueOf(mValue.measuredTime / 1000));
 
                 HttpUtil.getInstance().add(req);
             }
