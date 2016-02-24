@@ -139,6 +139,8 @@ public class WhMeter {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext.getApplicationContext());
             String host = pref.getString("pref_server_ip", "");
 
+            Logger.d("Register to server : " + host);
+
             if(host != null && host.length() > 0) {
                 String url = String.format("http://%s/json/watt_register.php", host);
                 HttpUtil.HttpData req = HttpUtil.HttpData.createPostRequest(url);
@@ -149,10 +151,10 @@ public class WhMeter {
                     }
                 };
                 req.postData.put("current_watt", String.format("%.3f", mValue.currentWatt));
-                req.postData.put("monthly", String.format("%.5f", mValue.monthlyUsedWatt));
+                req.postData.put("monthly", String.format("%.5f", (mValue.monthlyUsedWatt / 1000f)));
                 req.postData.put("current_voltage", String.format("%.3f", mValue.currentVoltage));
                 req.postData.put("total_current", String.format("%.3f", mValue.totalCurrent));
-                req.postData.put("measure_time", String.valueOf(mValue.measuredTime));
+                req.postData.put("measure_time", String.valueOf(mValue.measuredTime / 1000));
 
                 HttpUtil.getInstance().add(req);
             }
